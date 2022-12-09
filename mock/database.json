@@ -1,0 +1,69 @@
+{
+  "pessoas": [
+    {
+      "id": 1,
+      "nome": "Marcos",
+      "email": "midianet@gmail.com",
+      "cidadeId": 1
+    },
+    {
+      "id": 2,
+      "nome": "Maria",
+      "email": "malu@gmail.com",
+      "cidadeId": 2
+    },
+    {
+      "id": 3,
+      "nome": "Glauce",
+      "email": "midianet@gmail.com",
+      "cidadeId": 5
+    },
+    {
+      "id": 4,
+      "nome": "Elisa",
+      "email": "elisa@hotmail.com",
+      "cidadeId": 4
+    },
+    {
+      "nome": "Ana",
+      "email": "ana@gmail.com",
+      "cidadeId": 2,
+      "id": 5
+    },
+    {
+      "nome": "fdafasf",
+      "email": "fdaafd@tste.com",
+      "cidadeId": 2,
+      "id": 6
+    }
+  ],
+  "cidades": [
+    {
+      "id": 1,
+      "nome": "Goiânia"
+    },
+    {
+      "nome": "Ituiutaba",
+      "id": 2
+    },
+    {
+      "nome": "Anápolis",
+      "id": 3
+    },
+    {
+      "nome": "Brasília",
+      "id": 4
+    },
+    {
+      "nome": "Florianopolis",
+      "id": 5
+    },
+    {
+      "nome": "Rio de Janeiro",
+      "id": 6
+    }
+  ],
+  "auth": {
+    "accessToken": "aaaaaaaaaa.bbbbbbbbbb.cccccccc"
+  }
+}
