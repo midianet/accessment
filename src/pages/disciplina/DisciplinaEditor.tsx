@@ -1,77 +1,79 @@
 import { useEffect, useState } from 'react';
+import { Environment } from '../../shared/environment';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import  * as yup  from 'yup';
-import { Box, Grid, LinearProgress, Paper, Typography } from '@mui/material';
+import { Box, Grid, LinearProgress, Paper } from '@mui/material';
 
 import { LayoutBase } from '../../shared/layouts';
 import { BarraAcoesEdicao, DialogoConfirmacao } from '../../shared/components';
 import { VForm, VTextField, useVForm, IVFormErrors } from '../../shared/forms';
-import { CidadeService } from '../../shared/services/api/cidades/CidadeService';
-import { useMessageContext } from '../../shared/contexts';
+import { useMessageContext, MessageType } from '../../shared/contexts';
+import { DisciplinaService } from '../../shared/services/api/disciplina/DisciplinaService';
 
-interface IFormData {
+interface Form {
   nome: string;
 }
-const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
+const validationSchema: yup.SchemaOf<Form> = yup.object().shape({
   nome: yup.string().required().min(3), 
 });
 
-export const CidadeEditor: React.FC = () => {
+export const DisciplinaEditor: React.FC = () => {
   const navigate = useNavigate();
-  const { id = 'nova' } = useParams<'id'>();
+  const { id = undefined } = useParams<'id'>();
+  const isNew = id === undefined;
   const [isLoading, setIsLoading] = useState(false);
-  const [titulo, setTitulo] = useState('');
-  const { formRef, save } = useVForm();
-  const {showMessage} = useMessageContext();
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
+  const [title, setTitle] = useState('');
+  const { formRef, save } = useVForm();
+  const { showMessage } = useMessageContext();
   
   useEffect(() => {
-    if(id !== 'nova') {
-      setIsLoading(true);      
-      CidadeService.getById(Number(id))
-        .then((result) => {
-          setIsLoading(false);
-          if (result instanceof Error) {
-            showMessage({message: result.message , level:'error'});
-            navigate('/cidades');
-          }else{
-            setTitulo(result.nome);
-            formRef.current?.setData(result);
-          }
-        });
-    }else{
+    if(isNew) {
       formRef.current?.setData({
         nome: ''
       });
+    }else{
+      setIsLoading(true);      
+      DisciplinaService.getById(Number(id))
+        .then((result) => {
+          setIsLoading(false);
+          if (result instanceof Error) {
+            showMessage({message: result.message, level: MessageType.Error});
+            navigate(Environment.DISCIPLINA_LISTA);
+          }else{
+            setTitle(result.nome);
+            formRef.current?.setData(result);
+          }
+        });
     }
   }, [id]);
 
-  const handleSave = (dados: IFormData ) => {
-    formValidationSchema.
+  const handleSave = (dados: Form ) => {
+    validationSchema.
       validate(dados, { abortEarly:false })
       .then((dadosValidos) =>{
         setIsLoading(true);
-        if(id === 'nova'){
-          CidadeService.create(dadosValidos)
+        if(isNew){
+          DisciplinaService.create(dadosValidos)
             .then((result) => {
               setIsLoading(false);
               if(result instanceof Error){
-                showMessage({message: result.message , level:'error'});
+                showMessage({message: result.message, level: MessageType.Error});
               }else{
-                showMessage({message: 'Registro criado com sucesso'  , level:'success'});                
-                navigate('/cidades');
+                showMessage({message: Environment.REGISTRO_CRIADO, level: MessageType.Success});
+                navigate(Environment.DISCIPLINA_LISTA);
               }
             });
-        }else{
-          CidadeService.updateById(Number(id), {id: Number(id), ...dadosValidos})
+        } else {
+          DisciplinaService.updateById(Number(id), {id: Number(id), ...dadosValidos})
             .then((result) => {
               setIsLoading(false);
               if(result instanceof Error){
-                showMessage({message: result.message , level:'error'});
+                showMessage({message: result.message, level: MessageType.Error});
               }else{
-                showMessage({message: 'Registro alterado com sucesso'  , level:'success'});                
-                navigate('/cidades');
+                showMessage({message: Environment.REGISTRO_ALTERADO, level: MessageType.Success});
+                navigate(Environment.DISCIPLINA_LISTA);
               }
             });
         }
@@ -88,13 +90,13 @@ export const CidadeEditor: React.FC = () => {
 
   const onDelete = () => {
     setIsOpenDelete(false);
-    CidadeService.deleteById(Number(id))
+    DisciplinaService.deleteById(Number(id))
       .then(result => {
         if(result instanceof Error){
-          showMessage({message: result.message , level:'error'});
+          showMessage({message: result.message, level: MessageType.Error});
         }else{
-          showMessage({message:'Registro apagado com sucesso!', level:'success'});
-          navigate('/cidades');
+          showMessage({message: Environment.REGISTRO_REMOVIDO, level: MessageType.Success});
+          navigate(Environment.DISCIPLINA_LISTA);
         }
       });
   };
@@ -105,18 +107,18 @@ export const CidadeEditor: React.FC = () => {
     
   return (
     <LayoutBase 
-      titulo={id === 'nova' ? 'Nova Cidade' : titulo}
+      titulo={id ? title : 'Nova Disciplina'}
       toolbar={
         <BarraAcoesEdicao
           rotuloNovo='Nova'
-          mostrarNovo={id !== 'nova'}
-          mostrarDeletar={id !== 'nova'}
+          mostrarNovo={!isNew}
+          mostrarDeletar={!isNew}
           mostrarSalvar
           prontoSalvar={!isLoading}
           prontoNovo={!isLoading}
           prontoDeletar={!isLoading}
-          eventoNovo = {() => navigate('/cidades/detalhe/nova')}
-          eventoVoltar = {() => navigate('/cidades')}
+          eventoNovo = {() => navigate(Environment.DISCIPLINA_EDITOR)}
+          eventoVoltar = {() => navigate(Environment.DISCIPLINA_LISTA)}
           eventoSalvar = {save}
           eventoDeletar = {() => handleDelete()}
         />
@@ -124,7 +126,7 @@ export const CidadeEditor: React.FC = () => {
     >
       <DialogoConfirmacao
         isOpen={isOpenDelete}
-        text="Confirma Exclusão?"
+        text={Environment.REGISTRO_REMOVER_PERGUNTA}
         handleYes={onDelete}
         handleNo={setIsOpenDelete}
       />
@@ -135,9 +137,6 @@ export const CidadeEditor: React.FC = () => {
               <LinearProgress variant="indeterminate"/>
             </Grid>
             )}
-            <Grid item>
-              <Typography variant="h6">Geral</Typography>
-            </Grid>
             <Grid container item direction="row" spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
                 <VTextField
@@ -145,7 +144,7 @@ export const CidadeEditor: React.FC = () => {
                   label="Nome"
                   disabled={isLoading}
                   placeholder="Nome" 
-                  onChange={e => setTitulo(e.target.value)}
+                  onChange={e => setTitle(e.target.value)}
                   name="nome"/>
               </Grid>
             </Grid>

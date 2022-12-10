@@ -1,30 +1,26 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 
-import { CidadeService } from '../../../shared/services/api/cidades/CidadeService';
+import { DisciplinaService } from '../../../shared/services/api/disciplina/DisciplinaService';
 import { useDebounce } from '../../../shared/hooks';
 import { useField } from '@unform/core';
-import { useMessageContext } from '../../../shared/contexts';
 
-
-type TAutoCompleteOption = {
+type AutoCompleteOption = {
   id: number;
   label: string;
 }
 
-interface IAutoCompleteCidadeProps {
+interface AutoCompleteCidadeProps {
   isExternalLoading?: boolean;
 }
-export const AutoCompleteCidade: React.FC<IAutoCompleteCidadeProps> = ({ isExternalLoading = false }) => {
-  const { fieldName, registerField, defaultValue, error, clearError } = useField('cidadeId');
+export const AutoCompleteCidade: React.FC<AutoCompleteCidadeProps> = ({ isExternalLoading = false }) => {
+  const { fieldName, registerField, defaultValue, error, clearError } = useField('disciplinaId');
   const { debounce } = useDebounce();
-  const {showMessage} = useMessageContext();
-
   const [selectedId, setSelectedId] = useState<number | undefined>(defaultValue);
-
-  const [opcoes, setOpcoes] = useState<TAutoCompleteOption[]>([]);
+  const [opcoes, setOpcoes] = useState<AutoCompleteOption[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [busca, setBusca] = useState('');
+  const [first, setFirst] = useState(true);
 
   useEffect(() => {
     registerField({
@@ -36,16 +32,15 @@ export const AutoCompleteCidade: React.FC<IAutoCompleteCidadeProps> = ({ isExter
 
   useEffect(() => {
     setIsLoading(true);
-
     debounce(() => {
-      CidadeService.getAll(1, busca)
+      DisciplinaService.getAll(first ? -1 : 1, busca)
         .then((result) => {
+          setFirst(false);
           setIsLoading(false);
-
           if (result instanceof Error) {
             // alert(result.message);
           } else {
-            setOpcoes(result.data.map(cidade => ({ id: cidade.id, label: cidade.nome })));
+            setOpcoes(result.data.map(disciplina => ({ id: disciplina.id, label: disciplina.nome})));
           }
         });
     });
@@ -53,13 +48,10 @@ export const AutoCompleteCidade: React.FC<IAutoCompleteCidadeProps> = ({ isExter
 
   const autoCompleteSelectedOption = useMemo(() => {
     if (!selectedId) return null;
-
     const selectedOption = opcoes.find(opcao => opcao.id === selectedId);
     if (!selectedOption) return null;
-
     return selectedOption;
   }, [selectedId, opcoes]);
-
 
   return (
     <Autocomplete
@@ -67,21 +59,18 @@ export const AutoCompleteCidade: React.FC<IAutoCompleteCidadeProps> = ({ isExter
       closeText='Fechar'
       noOptionsText='Sem opções'
       loadingText='Carregando...'
-
       disablePortal
-
       options={opcoes}
       loading={isLoading}
       disabled={isExternalLoading}
       value={autoCompleteSelectedOption}
       onInputChange={(_, newValue) => setBusca(newValue)}
-      onChange={(_, newValue) => { setSelectedId(newValue?.id); setBusca(''); clearError(); }}
+      onChange={(_, newValue) => { setSelectedId(newValue?.id); clearError(); }}
       popupIcon={(isExternalLoading || isLoading) ? <CircularProgress size={28} /> : undefined}
       renderInput={(params) => (
         <TextField
           {...params}
-
-          label="Cidade"
+          label="Disciplina"
           error={!!error}
           helperText={error}
         />

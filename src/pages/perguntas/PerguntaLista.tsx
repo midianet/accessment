@@ -1,22 +1,23 @@
-import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMemo, useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material';
+
 import { BarraAcoesLista, DialogoConfirmacao } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
 import { useDebounce } from '../../shared/hooks';
-import { Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material';
 import { Environment } from '../../shared/environment'; 
-import { CidadeService, IListagemCidade } from '../../shared/services/api/cidades/CidadeService';
-import { useMessageContext } from '../../shared/contexts';
+import { useMessageContext, MessageType } from '../../shared/contexts';
 
-export const CidadeLista: React.FC = () => {
+import { PerguntaList, PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
+
+export const PessoaLista: React.FC = () => {
   
   const {showMessage} = useMessageContext();
-
   const [searchParams, setSearchParams] = useSearchParams();
   const { debounce } = useDebounce(1000);
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<IListagemCidade[]>([]);
+  const [rows, setRows] = useState<PerguntaList[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
@@ -33,11 +34,12 @@ export const CidadeLista: React.FC = () => {
   useEffect(() => {
     setIsLoading(true);
     debounce(() => {
-      CidadeService.getAll(pagina, busca)
+      PerguntaService.getAll(pagina, busca)
         .then((result) => {
+          console.log(result);
           setIsLoading(false);
           if(result instanceof Error){
-            showMessage({message: result.message , level:'error'});
+            showMessage({message: result.message, level: MessageType.Error});
           }else{
             setRows(result.data);
             setTotalCount(result.totalCount);
@@ -46,20 +48,21 @@ export const CidadeLista: React.FC = () => {
     });
   },[busca, pagina]);
 
+
   const onDelete = () => {
     setIsOpenDelete(false);
     if(selectedId){
-      CidadeService.deleteById(selectedId)
+      PerguntaService.deleteById(selectedId)
         .then(result => {
           if(result instanceof Error){
-            showMessage({message: result.message , level:'error'});
+            showMessage({message: result.message, level: MessageType.Error});
           }else{
             setRows(oldRows => {
               return [ 
                 ...oldRows.filter(oldRow => oldRow.id !== selectedId),
               ];
             });
-            showMessage({message:'Registro apagado com sucesso!', level:'success'});
+            showMessage({message: Environment.REGISTRO_REMOVIDO, level: MessageType.Success});
           }
         });
     }
@@ -71,19 +74,19 @@ export const CidadeLista: React.FC = () => {
   };
 
   return (
-    <LayoutBase titulo="Listagem de Cidades" toolbar= {
+    <LayoutBase titulo="Lista de Perguntas" toolbar= {
       <BarraAcoesLista
         mostrarPesquisa={true}
         mostrarNovo={true}
         rotuloNovo='Nova'
-        eventoNovo={() => navigate('/cidades/detalhe/nova')}
+        eventoNovo={() => navigate(Environment.PERGUNTA_EDITOR)}
         textoPesquisa={busca}
         eventoPesquisa={texto => setSearchParams({busca:texto, pagina: '1'}, {replace: true})}
-      />
-    }>
+      />}
+    >
       <DialogoConfirmacao
         isOpen={isOpenDelete}
-        text="Confirma Exclusão?"
+        text={Environment.REGISTRO_REMOVER_PERGUNTA}
         handleYes={onDelete}
         handleNo={setIsOpenDelete}
       />
@@ -92,7 +95,7 @@ export const CidadeLista: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={{width: '70px'}}>Ações</TableCell>
-              <TableCell>Nome</TableCell>
+              <TableCell>Descrição</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -102,11 +105,11 @@ export const CidadeLista: React.FC = () => {
                   <IconButton size="small" onClick={() => handleDelete(row.id)}>
                     <Icon>delete</Icon>
                   </IconButton>
-                  <IconButton size="small" onClick={() => navigate(`/cidades/detalhe/${row.id}`)} >
+                  <IconButton size="small" onClick={() => navigate(`${Environment.PERGUNTA_EDITOR}/${row.id}`)} >
                     <Icon>edit</Icon>
                   </IconButton>
                 </TableCell>
-                <TableCell>{row.nome}</TableCell>
+                <TableCell>{`Pergunta ${row.id}`}</TableCell>
               </TableRow>
             ))}
           </TableBody>

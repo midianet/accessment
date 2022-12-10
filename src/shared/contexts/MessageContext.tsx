@@ -1,5 +1,10 @@
 import { createContext, useCallback, useContext, useState } from 'react';
 
+export enum MessageType {
+  Error = 'error',
+  Success = 'success'
+}
+
 interface Message{
    level: 'error' | 'success';
    message: string;
@@ -24,7 +29,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
 
   const showMessage = useCallback((newMessage : Message) => {
     setMessage(newMessage);
-    setTimeout(() => setMessage(undefined), 2500);
+    setTimeout(() => setMessage(undefined), message?.level == 'error' ? 3500 : 2500 );
   },[]);
 
   return (

@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { Box, Grid, Card, CardContent, Typography } from '@mui/material';
 import { BarraAcoesEdicao } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts/LayoutBase';
-import { PessoasService } from '../../shared/services/api/pessoas/PessoasService';
-import { CidadeService } from '../../shared/services/api/cidades/CidadeService';
+import { PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
+import { DisciplinaService } from '../../shared/services/api/disciplina/DisciplinaService';
 import { useMessageContext } from '../../shared/contexts';
 
 export const Dashboard = () => {
@@ -15,7 +15,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     setIsLoadingPessoas(true);
-    PessoasService.getAll(1)
+    PerguntaService.getAll(1)
       .then((result) => {
         setIsLoadingPessoas(false);
         if(result instanceof Error){
@@ -28,7 +28,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     setIsLoadingCidades(true);
-    CidadeService.getAll(1)
+    DisciplinaService.getAll(1)
       .then((result) => {
         setIsLoadingCidades(false);
         if(result instanceof Error){

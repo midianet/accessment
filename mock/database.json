@@ -1,66 +1,70 @@
 {
-  "pessoas": [
+  "perguntas": [
     {
       "id": 1,
-      "nome": "Marcos",
-      "email": "midianet@gmail.com",
-      "cidadeId": 1
+      "texto": "A aplicação possui arquitetura de solução que oferece flexibilidade de mudanças sem que haja grandes impactos.",
+      "ajuda": "campo para ajuda 1",
+      "disciplinaId": 1
     },
     {
       "id": 2,
-      "nome": "Maria",
-      "email": "malu@gmail.com",
-      "cidadeId": 2
+      "texto": "A aplicação utiliza padrões de arquitetura de referência.",
+      "ajuda": "campo para ajuda 2",
+      "disciplinaId": 2
     },
     {
       "id": 3,
-      "nome": "Glauce",
-      "email": "midianet@gmail.com",
-      "cidadeId": 5
+      "texto": "A stack de tecnologias da aplicação permite evolução.",
+      "ajuda": "campo para ajuda 3",
+      "disciplinaId": 6
     },
     {
       "id": 4,
-      "nome": "Elisa",
-      "email": "elisa@hotmail.com",
-      "cidadeId": 4
+      "texto": "A arquitetura de solução da aplicação é modular ou está passando por um processo de modularização.",
+      "ajuda": "campo para ajuda 4",
+      "disciplinaId": 5
     },
     {
-      "nome": "Ana",
-      "email": "ana@gmail.com",
-      "cidadeId": 2,
-      "id": 5
+      "id": 5,      
+      "texto": "A arquitetura de solução da aplicação não é predominantemente monolítica.",
+      "ajuda": "campo para ajuda 5",
+      "disciplinaId": 4
     },
     {
-      "nome": "fdafasf",
-      "email": "fdaafd@tste.com",
-      "cidadeId": 2,
-      "id": 6
+      "id": 6,
+      "nome": "A arquitetura de solução utiliza de soluções plug-in. (capacidade de mudar providers/serviços sem impactar a aplicação)",
+      "ajuda": "campo para ajuda 6",
+      "disciplinaId": 3
     }
   ],
-  "cidades": [
+  "disciplinas": [
     {
       "id": 1,
-      "nome": "Goiânia"
+      "nome": "Arquitetura Corporativa"
     },
     {
-      "nome": "Ituiutaba",
+      "nome": "DevSecOps",
       "id": 2
     },
     {
-      "nome": "Anápolis",
+      "nome": "Arquitetura de Solução",
       "id": 3
     },
     {
-      "nome": "Brasília",
+      "nome": "Arquitetura de Software",
       "id": 4
     },
     {
-      "nome": "Florianopolis",
+      "nome": "Engenharia de Software",
       "id": 5
     },
     {
-      "nome": "Rio de Janeiro",
+      "nome": "Qualidade",
       "id": 6
+    },
+    {
+      "nome": "Dados",
+      "id": 7
     }
   ],
   "auth": {

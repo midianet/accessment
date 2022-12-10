@@ -10,9 +10,31 @@ export const Environment = {
   /**
    * Texto padrão para lista quando vazia.
    */
-  LISTAGEM_VAZIA: 'Nenhum registro encontrado.',
+  LISTAGEM_VAZIA: 'Nenhum registro encontrado!',
+
+  REGISTRO_CRIADO: 'Registro criado com sucesso.',
+  REGISTRO_ALTERADO: 'Registro alterado com sucesso.',
+  REGISTRO_REMOVIDO: 'Registro removido com sucesso.',
+
+  REGISTRO_REMOVER_PERGUNTA: 'Confirma Exclusão?',  
+
+  REGISTRO_CRIAR_ERRO: 'Erro ao criar registro',
+  REGISTRO_ALTERAR_ERRO: 'Erro ao alterar registro',
+  REGISTRO_OBTER_ERRO: 'Erro ao obter registro',
+
+  REGISTRO_LISTA_ERRO : 'Erro ao listar os registros',
+
   /**
    * Url base para chamadas de API.
    */
-  URL_BASE: 'http://localhost:3333'
+  URL_BASE: 'http://localhost:3333',
+
+  DISCIPLINA_LISTA : '/disciplina',
+  DISCIPLINA_EDITOR : '/disciplina/editor',
+  DISCIPLINA_API: '/disciplinas',
+
+  PERGUNTA_LISTA : '/pergunta',
+  PERGUNTA_EDITOR : '/pergunta/editor',
+  PERGUNTA_API: '/perguntas'
+ 
 };

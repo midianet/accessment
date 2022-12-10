@@ -1,82 +1,87 @@
-import { Box, Grid, LinearProgress, Paper, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { Environment } from '../../shared/environment';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import  * as yup  from 'yup';
+import { Box, Grid, LinearProgress, Paper } from '@mui/material';
+
+import { LayoutBase } from '../../shared/layouts';
 import { BarraAcoesEdicao, DialogoConfirmacao } from '../../shared/components';
 import { VForm, VTextField, useVForm, IVFormErrors } from '../../shared/forms';
-import { LayoutBase } from '../../shared/layouts';
-import { PessoasService } from '../../shared/services/api/pessoas/PessoasService';
-import  * as yup  from 'yup';
-import { AutoCompleteCidade } from './components/AutoCompleteCidade';
-import { useMessageContext } from '../../shared/contexts';
+import { useMessageContext, MessageType } from '../../shared/contexts';
 
-interface IFormData {
-  email: string;
-  cidadeId: number;
-  nome: string;
+import { PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
+import { AutoCompleteCidade } from './components/AutoCompleteDisciplina';
+
+interface Form {
+  texto: string;
+  ajuda?: string;
+  disciplinaId: number;
 }
-const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
-  nome: yup.string().required().min(3), 
-  email: yup.string().required().email(),
-  cidadeId: yup.number().required()
+
+const validationSchema: yup.SchemaOf<Form> = yup.object().shape({
+  texto: yup.string().required().min(3), 
+  ajuda: yup.string().notRequired(),
+  disciplinaId: yup.number().required()
 });
 
-export const PessoaEditor: React.FC = () => {
-  const { id = 'nova' } = useParams<'id'>();
+export const PerguntaEditor: React.FC = () => {
   const navigate = useNavigate();
+  const { id = undefined } = useParams<'id'>();
+  const isNew = id === undefined;
   const [isLoading, setIsLoading] = useState(false);
-  const [titulo, setTitulo] = useState('');
-  const { formRef, save } = useVForm();
-  const {showMessage} = useMessageContext();
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
+  const [title, setTitle] = useState('');
+  const { formRef, save } = useVForm();
+  const { showMessage } = useMessageContext();
   
   useEffect(() => {
-    if(id !== 'nova') {
+    if(isNew) {
+      formRef.current?.setData({
+        texto: '',
+        disciplinaId: undefined
+      });
+    } else {
       setIsLoading(true);      
-      PessoasService.getById(Number(id))
+      PerguntaService.getById(Number(id))
         .then((result) => {
           setIsLoading(false);
           if (result instanceof Error) {
-            showMessage({message: result.message , level:'error'});
-            navigate('/pessoas');
-          }else{
-            setTitulo(result.nome);
+            showMessage({message: result.message, level: MessageType.Error});
+            navigate(Environment.PERGUNTA_LISTA);
+          } else {
+            setTitle(`Pergunta ${id}`);
             formRef.current?.setData(result);
           }
         });
-    }else{
-      formRef.current?.setData({
-        nome: '',
-        email:'',
-        cidadeId: undefined
-      });
     }
   }, [id]);
 
-  const handleSave = (dados: IFormData ) => {
-    formValidationSchema.
+  const handleSave = (dados: Form ) => {
+    validationSchema.
       validate(dados, { abortEarly:false })
       .then((dadosValidos) =>{
         setIsLoading(true);
-        if(id === 'nova'){
-          PessoasService.create(dadosValidos)
+        if(isNew){
+          PerguntaService.create(dadosValidos)
             .then((result) => {
               setIsLoading(false);
               if(result instanceof Error){
-                showMessage({message: result.message , level:'error'});
+                showMessage({message: result.message, level: MessageType.Error});
               }else{
-                showMessage({message: 'Registro criado com sucesso'  , level:'success'});
-                navigate('/pessoas');
+                showMessage({message: Environment.REGISTRO_CRIADO, level: MessageType.Success});
+                navigate(Environment.PERGUNTA_LISTA);
               }
             });
-        }else{
-          PessoasService.updateById(Number(id), {id: Number(id), ...dadosValidos})
+        } else {
+          PerguntaService.updateById(Number(id), {id: Number(id), ...dadosValidos})
             .then((result) => {
               setIsLoading(false);
               if(result instanceof Error){
-                showMessage({message: result.message , level:'error'});
+                showMessage({message: result.message, level: MessageType.Error});
               }else{
-                showMessage({message: 'Registro alterado com sucesso'  , level:'success'});
-                navigate('/pessoas');
+                showMessage({message: Environment.REGISTRO_ALTERADO, level: MessageType.Success});
+                navigate(Environment.PERGUNTA_LISTA);
               }
             });
         }
@@ -93,13 +98,13 @@ export const PessoaEditor: React.FC = () => {
 
   const onDelete = () => {
     setIsOpenDelete(false);
-    PessoasService.deleteById(Number(id))
+    PerguntaService.deleteById(Number(id))
       .then(result => {
         if(result instanceof Error){
-          showMessage({message: result.message , level:'error'});
+          showMessage({message: result.message, level: MessageType.Error});
         }else{
-          showMessage({message:'Registro apagado com sucesso!', level:'success'});
-          navigate('/pessoas');
+          showMessage({message: Environment.REGISTRO_REMOVIDO, level: MessageType.Success});
+          navigate(Environment.PERGUNTA_LISTA);
         }
       });
   };
@@ -110,18 +115,18 @@ export const PessoaEditor: React.FC = () => {
     
   return (
     <LayoutBase 
-      titulo={id === 'nova' ? 'Nova Pessoa' : titulo}
+      titulo={id ? title : 'Nova Pergunta'}
       toolbar={
         <BarraAcoesEdicao
           rotuloNovo='Nova'
-          mostrarNovo={id !== 'nova'}
-          mostrarDeletar={id !== 'nova'}
+          mostrarNovo={!isNew}
+          mostrarDeletar={!isNew}
           mostrarSalvar
           prontoSalvar={!isLoading}
           prontoNovo={!isLoading}
           prontoDeletar={!isLoading}
-          eventoNovo = {() => navigate('/pessoas/detalhe/nova')}
-          eventoVoltar = {() => navigate('/pessoas')}
+          eventoNovo = {() => navigate(Environment.PERGUNTA_EDITOR)}
+          eventoVoltar = {() => navigate(Environment.PERGUNTA_LISTA)}
           eventoSalvar = {save}
           eventoDeletar = {() => handleDelete()}
         />
@@ -129,7 +134,7 @@ export const PessoaEditor: React.FC = () => {
     >
       <DialogoConfirmacao
         isOpen={isOpenDelete}
-        text="Confirma Exclusão?"
+        text={Environment.REGISTRO_REMOVER_PERGUNTA}
         handleYes={onDelete}
         handleNo={setIsOpenDelete}
       />
@@ -140,28 +145,31 @@ export const PessoaEditor: React.FC = () => {
               <LinearProgress variant="indeterminate"/>
             </Grid>
             )}
-            <Grid item>
-              <Typography variant="h6">Geral</Typography>
-            </Grid>
             <Grid container item direction="row" spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
                 <VTextField
                   fullWidth
-                  label="Nome"
+                  multiline={true}
+                  minRows={4}
+                  maxRows={4}
+                  label="Texto"
                   disabled={isLoading}
-                  placeholder="Nome" 
-                  onChange={e => setTitulo(e.target.value)}
-                  name="nome"/>
+                  placeholder="Texto" 
+                  onChange={e => setTitle(e.target.value)}
+                  name="texto"/>
               </Grid>
             </Grid>
             <Grid container item direction="row" spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
                 <VTextField
                   fullWidth
-                  label="E-mail"
+                  multiline={true}
+                  minRows={4}
+                  maxRows={4}                  
+                  label="Ajuda"
                   disabled={isLoading} 
-                  placeholder="Email" 
-                  name="email"
+                  placeholder="Ajuda" 
+                  name="ajuda"
                 />
               </Grid>
             </Grid>

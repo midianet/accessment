@@ -1,8 +1,9 @@
 
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Dashboard, CidadeLista , CidadeEditor , PessoaLista, PessoaEditor} from '../pages';
+import { Dashboard, DisciplinaLista , DisciplinaEditor , PessoaLista, PerguntaEditor} from '../pages';
 import { useDrawerContext } from '../shared/contexts';
+import { Environment } from '../shared/environment'; 
 
 export const AppRoutes = () =>  {
 
@@ -12,29 +13,31 @@ export const AppRoutes = () =>  {
     setDrawerOptions([
       {
         icon: 'home',
-        path: '/pagina-inicial',
+        path: '/home',
         label: 'Página Inicial'
       },
       {
-        icon: 'people',
-        path: '/pessoas',
-        label: 'Pessoas'
+        icon: 'bookmark',
+        path: Environment.DISCIPLINA_LISTA,
+        label: 'Disciplinas'
       },
       {
-        icon: 'location_city',
-        path: '/cidades',
-        label: 'Cidades'
+        icon: 'live_help',
+        path: Environment.PERGUNTA_LISTA,
+        label: 'Perguntas'
       }
     ]);
   },[]); 
 
   return (<Routes>
-    <Route path="/pagina-inicial" element={<Dashboard />}/>
-    <Route path="/cidades" element={<CidadeLista />}/>
-    <Route path="/cidades/detalhe/:id" element={<CidadeEditor />}/>
-    <Route path="/pessoas" element={<PessoaLista/>}/>
-    <Route path="/pessoas/detalhe/:id" element={<PessoaEditor />}/>
-    <Route path="*" element={<Navigate to={'/pagina-inicial'} />} />
+    <Route path="/home" element={<Dashboard />}/>
+    <Route path={Environment.DISCIPLINA_LISTA} element={<DisciplinaLista />}/>
+    <Route path={Environment.DISCIPLINA_EDITOR} element={<DisciplinaEditor />}/>
+    <Route path={`${Environment.DISCIPLINA_EDITOR}/:id`} element={<DisciplinaEditor />}/>
+    <Route path={Environment.PERGUNTA_LISTA} element={<PessoaLista/>}/>
+    <Route path={Environment.PERGUNTA_EDITOR} element={<PerguntaEditor />}/>
+    <Route path={`${Environment.PERGUNTA_EDITOR}/:id`} element={<PerguntaEditor />}/>
+    <Route path="*" element={<Navigate to={'/home'} />} />
   </Routes>
   );
 };

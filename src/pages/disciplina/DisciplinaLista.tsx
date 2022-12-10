@@ -1,21 +1,24 @@
-import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMemo, useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material';
+
 import { BarraAcoesLista, DialogoConfirmacao } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts';
-import { IListagemPessoa, PessoasService } from '../../shared/services/api/pessoas/PessoasService';
 import { useDebounce } from '../../shared/hooks';
-import { Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material';
-import { Environment } from '../../shared/environment';
-import { useMessageContext } from '../../shared/contexts';
+import { Environment } from '../../shared/environment'; 
+import { useMessageContext, MessageType } from '../../shared/contexts';
 
-export const PessoaLista: React.FC = () => {
+import { DisciplinaService, DisciplinaList } from '../../shared/services/api/disciplina/DisciplinaService';
+
+export const DisciplinaLista: React.FC = () => {
   
-  const {showMessage} = useMessageContext();
+  const { showMessage } = useMessageContext();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const { debounce } = useDebounce(1000);
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<IListagemPessoa[]>([]);
+  const [rows, setRows] = useState<DisciplinaList[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
@@ -32,11 +35,11 @@ export const PessoaLista: React.FC = () => {
   useEffect(() => {
     setIsLoading(true);
     debounce(() => {
-      PessoasService.getAll(pagina, busca)
+      DisciplinaService.getAll(pagina, busca)
         .then((result) => {
           setIsLoading(false);
           if(result instanceof Error){
-            showMessage({message: result.message , level:'error'});
+            showMessage({message: result.message, level: MessageType.Error});
           }else{
             setRows(result.data);
             setTotalCount(result.totalCount);
@@ -45,21 +48,20 @@ export const PessoaLista: React.FC = () => {
     });
   },[busca, pagina]);
 
-
   const onDelete = () => {
     setIsOpenDelete(false);
     if(selectedId){
-      PessoasService.deleteById(selectedId)
+      DisciplinaService.deleteById(selectedId)
         .then(result => {
           if(result instanceof Error){
-            showMessage({message: result.message , level:'error'});
+            showMessage({message: result.message, level: MessageType.Error});
           }else{
             setRows(oldRows => {
               return [ 
                 ...oldRows.filter(oldRow => oldRow.id !== selectedId),
               ];
             });
-            showMessage({message:'Registro apagado com sucesso!', level:'success'});
+            showMessage({message: Environment.REGISTRO_REMOVIDO, level: MessageType.Success});
           }
         });
     }
@@ -71,19 +73,19 @@ export const PessoaLista: React.FC = () => {
   };
 
   return (
-    <LayoutBase titulo="Listagem de Pessoas" toolbar= {
+    <LayoutBase titulo="Lista de Disciplinas" toolbar= {
       <BarraAcoesLista
         mostrarPesquisa={true}
         mostrarNovo={true}
         rotuloNovo='Nova'
-        eventoNovo={() => navigate('/pessoas/detalhe/nova')}
+        eventoNovo={() => navigate(Environment.DISCIPLINA_EDITOR)}
         textoPesquisa={busca}
         eventoPesquisa={texto => setSearchParams({busca:texto, pagina: '1'}, {replace: true})}
-      />}
-    >
+      />
+    }>
       <DialogoConfirmacao
         isOpen={isOpenDelete}
-        text="Confirma Exclusão?"
+        text={Environment.REGISTRO_REMOVER_PERGUNTA}
         handleYes={onDelete}
         handleNo={setIsOpenDelete}
       />
@@ -92,8 +94,7 @@ export const PessoaLista: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={{width: '70px'}}>Ações</TableCell>
-              <TableCell>Nome Completo</TableCell>
-              <TableCell>Email</TableCell>
+              <TableCell>Nome</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -103,12 +104,11 @@ export const PessoaLista: React.FC = () => {
                   <IconButton size="small" onClick={() => handleDelete(row.id)}>
                     <Icon>delete</Icon>
                   </IconButton>
-                  <IconButton size="small" onClick={() => navigate(`/pessoas/detalhe/${row.id}`)} >
+                  <IconButton size="small" onClick={() => navigate(`${Environment.DISCIPLINA_EDITOR}/${row.id}`)} >
                     <Icon>edit</Icon>
                   </IconButton>
                 </TableCell>
                 <TableCell>{row.nome}</TableCell>
-                <TableCell>{row.email}</TableCell>
               </TableRow>
             ))}
           </TableBody>
