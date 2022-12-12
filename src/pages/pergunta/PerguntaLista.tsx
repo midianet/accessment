@@ -8,7 +8,7 @@ import { useDebounce } from '../../shared/hooks';
 import { Environment } from '../../shared/environment'; 
 import { useMessageContext, MessageType } from '../../shared/contexts';
 
-import { PerguntaList, PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
+import { Pergunta, PerguntaList, PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
 
 export const PerguntaLista: React.FC = () => {
   
@@ -17,38 +17,36 @@ export const PerguntaLista: React.FC = () => {
   const { debounce } = useDebounce(1000);
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<PerguntaList[]>([]);
+  const [rows, setRows] = useState<Pergunta[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<number>();
 
   const busca = useMemo(() => {
-    return searchParams.get('busca') || '';
+    return searchParams.get('texto') || '';
   }, [searchParams]);
 
   const pagina = useMemo(() => {
-    return Number(searchParams.get('pagina')) || 1;
+    return Number(searchParams.get('pagina')) || 0;
   }, [searchParams]);
 
   useEffect(() => {
     setIsLoading(true);
     debounce(() => {
-      PerguntaService.getAllWithDisciplina(pagina, busca)
+      PerguntaService.getAll(pagina, busca)
         .then((result) => {
           setIsLoading(false);
           if(result instanceof Error){
             showMessage({message: result.message, level: MessageType.Error});
           }else{
-            console.log(result.data);
             setRows(result.data);
             setTotalCount(result.totalCount);
           }
         });
     });
   },[busca, pagina]);
-
-
+  
   const onDelete = () => {
     setIsOpenDelete(false);
     if(selectedId){
@@ -81,7 +79,7 @@ export const PerguntaLista: React.FC = () => {
         rotuloNovo='Nova'
         eventoNovo={() => navigate(Environment.PERGUNTA_EDITOR)}
         textoPesquisa={busca}
-        eventoPesquisa={texto => setSearchParams({busca:texto, pagina: '1'}, {replace: true})}
+        eventoPesquisa={texto => setSearchParams({busca:texto, pagina: '0'}, {replace: true})}
       />}
     >
       <DialogoConfirmacao
@@ -111,7 +109,7 @@ export const PerguntaLista: React.FC = () => {
                   </IconButton>
                 </TableCell>
                 <TableCell>{`Pergunta ${row.id}`}</TableCell>
-                <TableCell>{row.disciplinas.nome}</TableCell>
+                <TableCell>{row.disciplina.nome}</TableCell>
               </TableRow>
             ))}
           </TableBody>

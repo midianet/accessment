@@ -1,33 +1,32 @@
 import { Environment } from '../../../environment';
 import { Api } from '../axios-config';
+import { UrlHelper } from '../axios-config/UrlHelper';
 import { Disciplina } from '../disciplina/DisciplinaService';
-
-export interface PerguntaList{
-    id: number;
-    disciplinasId: number;
-    disciplinas: Disciplina;
-}
 
 export interface Pergunta{
     id: number;
     texto: string;
     ajuda?: string;
-    disciplinasId: number;
+    disciplina: Disciplina;
 }
 
-type PerguntaListCount = {
-    data: PerguntaList[];
+export interface PerguntaList  {
+    data: Pergunta[];
     totalCount: number;
 }
 
-const getAll = async (page = 1, filter = ''): Promise<PerguntaListCount | Error> => {
+const getAll = async (page = 0, texto = '', order = ''): Promise<PerguntaList | Error> => {
   try{
-    const url = `${Environment.PERGUNTA_API}?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&id_like=${filter}`;
-    const { data, headers } = await Api.get(url);
+    const params: string[] = [];
+    if(page !== -1) params.push(`page=${page}`);
+    if(texto) params.push(`texto=${texto}`);
+    if(order) params.push(`order=${order}`);
+    const { data } = await Api.get(UrlHelper.parseUrl( Environment.PERGUNTA_API, params));
+    console.log(data);
     if (data) {
       return {
-        data,
-        totalCount: Number(headers['x-total-count'] || Environment.LIMITE_DE_LINHAS),
+        data : data.content,
+        totalCount: data.totalElements
       };
     }
     return new Error(Environment.REGISTRO_LISTA_ERRO);
@@ -37,7 +36,7 @@ const getAll = async (page = 1, filter = ''): Promise<PerguntaListCount | Error>
   }
 };
 
-const getAllWithDisciplina = async (page = 1, filter = ''): Promise<PerguntaListCount | Error> => {
+const getAllWithDisciplina = async (page = 0, filter = ''): Promise<PerguntaList | Error> => {
   try{
     const url = `${Environment.PERGUNTA_API}?_expand=disciplinas&_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&id_like=${filter}`;
     const { data, headers } = await Api.get(url);

@@ -1,30 +1,28 @@
 import { Environment } from '../../../environment';
 import { Api } from '../axios-config';
-
-export interface DisciplinaList{
-    id: number;
-    nome: string;
-}
+import { UrlHelper } from '../axios-config/UrlHelper';
 
 export interface Disciplina{
     id: number;
     nome: string;
 }
 
-type DisciplinaListCount = {
-    data: DisciplinaList[];
+export interface DisciplinaList {
+    data: Disciplina[];
     totalCount: number;
 }
 
-const getAll = async (page = 1, filter = ''): Promise<DisciplinaListCount | Error> => {
+const getAll = async (page = 0, nome = '', order = ''): Promise<DisciplinaList | Error> => {
   try{
-    const url = page === -1 ? Environment.DISCIPLINA_API : `${Environment.DISCIPLINA_API}?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&nome_like=${filter}`;
-    const { data, headers } = await Api.get(url);
-    console.log(data);
+    const params: string[] = [];
+    if(page !== -1) params.push(`page=${page}`);
+    if(nome) params.push(`nome=${nome}`);
+    if(order) params.push(`order=${order}`);
+    const {data} = await Api.get(UrlHelper.parseUrl( Environment.DISCIPLINA_API, params));
     if (data) {
       return {
-        data.content,
-        totalCount: Number(headers['x-total-count'] || Environment.LIMITE_DE_LINHAS),
+        data : data.content,
+        totalCount: data.totalElements
       };
     }
     return new Error(Environment.REGISTRO_LISTA_ERRO);

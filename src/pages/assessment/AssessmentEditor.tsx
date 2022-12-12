@@ -12,7 +12,7 @@ import { useMessageContext, MessageType } from '../../shared/contexts';
 import { PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
 import { AutoCompleteDisciplina } from './components/AutoCompleteDisciplina';
 import { AutoCompleteProjeto } from './components/AutoCompleteProjeto';
-
+/*
 interface Form {
   texto: string;
   ajuda?: string;
@@ -24,9 +24,9 @@ const validationSchema: yup.SchemaOf<Form> = yup.object().shape({
   ajuda: yup.string().notRequired(),
   disciplinasId: yup.number().required()
 });
-
+*/
 export const AssessmentEditor: React.FC = () => {
-  const navigate = useNavigate();
+/*  const navigate = useNavigate();
   const { id = undefined } = useParams<'id'>();
   const isNew = id === undefined;
   const [isLoading, setIsLoading] = useState(false);
@@ -92,9 +92,10 @@ export const AssessmentEditor: React.FC = () => {
         formRef.current?.setErrors(validationsErrors);
       });
   };
-    
+    */
   return (
     <LayoutBase titulo="Assessment">
+      {/*
       <VForm ref={formRef}  onSubmit={handleSave} >
         <Box margin={1} display="flex" flexDirection="column" component={Paper} variant = "outlined">
           <Grid container direction="column" padding={2} spacing={4} >
@@ -144,7 +145,7 @@ export const AssessmentEditor: React.FC = () => {
             </Grid>
           </Grid>
         </Box>
-      </VForm> 
+            </VForm> */}
     </LayoutBase>
   );
 

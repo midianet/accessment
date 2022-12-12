@@ -8,7 +8,7 @@ import { useDebounce } from '../../shared/hooks';
 import { Environment } from '../../shared/environment'; 
 import { useMessageContext, MessageType } from '../../shared/contexts';
 
-import { DisciplinaService, DisciplinaList } from '../../shared/services/api/disciplina/DisciplinaService';
+import { DisciplinaService, Disciplina } from '../../shared/services/api/disciplina/DisciplinaService';
 
 export const DisciplinaLista: React.FC = () => {
   
@@ -18,18 +18,18 @@ export const DisciplinaLista: React.FC = () => {
   const { debounce } = useDebounce(1000);
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<DisciplinaList[]>([]);
+  const [rows, setRows] = useState<Disciplina[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<number>();
 
   const busca = useMemo(() => {
-    return searchParams.get('busca') || '';
+    return searchParams.get('nome') || '';
   }, [searchParams]);
 
   const pagina = useMemo(() => {
-    return Number(searchParams.get('pagina')) || 1;
+    return Number(searchParams.get('pagina')) || 0;
   }, [searchParams]);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export const DisciplinaLista: React.FC = () => {
         rotuloNovo='Nova'
         eventoNovo={() => navigate(Environment.DISCIPLINA_EDITOR)}
         textoPesquisa={busca}
-        eventoPesquisa={texto => setSearchParams({busca:texto, pagina: '1'}, {replace: true})}
+        eventoPesquisa={texto => setSearchParams({nome:texto, pagina: '0'}, {replace: true})}
       />
     }>
       <DialogoConfirmacao
