@@ -16,13 +16,13 @@ import { AutoCompleteDisciplina } from './components/AutoCompleteDisciplina';
 interface Form {
   texto: string;
   ajuda?: string;
-  disciplinasId: number;
+  disciplinaId: number;
 }
 
 const validationSchema: yup.SchemaOf<Form> = yup.object().shape({
   texto: yup.string().required().min(3), 
   ajuda: yup.string().notRequired(),
-  disciplinasId: yup.number().required()
+  disciplinaId: yup.number().required()
 });
 
 export const PerguntaEditor: React.FC = () => {
@@ -63,7 +63,7 @@ export const PerguntaEditor: React.FC = () => {
       .then((dadosValidos) =>{
         setIsLoading(true);
         if(isNew){
-          PerguntaService.create(dadosValidos)
+          PerguntaService.create({...dadosValidos, disciplina: {id: dadosValidos.disciplinaId}})
             .then((result) => {
               setIsLoading(false);
               if(result instanceof Error){
