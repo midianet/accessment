@@ -9,23 +9,16 @@ import { LayoutBase } from '../../shared/layouts';
 import { BarraAcoesEdicao, DialogoConfirmacao } from '../../shared/components';
 import { VForm, VTextField, useVForm, IVFormErrors } from '../../shared/forms';
 import { useMessageContext, MessageType } from '../../shared/contexts';
-
-import { PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
-import { AutoCompleteCidade } from './components/AutoCompleteDisciplina';
+import { ProjetoService } from '../../shared/services/api/projeto/ProjetoService';
 
 interface Form {
-  texto: string;
-  ajuda?: string;
-  disciplinaId: number;
+  nome: string;
 }
-
 const validationSchema: yup.SchemaOf<Form> = yup.object().shape({
-  texto: yup.string().required().min(3), 
-  ajuda: yup.string().notRequired(),
-  disciplinaId: yup.number().required()
+  nome: yup.string().required().min(3), 
 });
 
-export const PerguntaEditor: React.FC = () => {
+export const ProjetoEditor: React.FC = () => {
   const navigate = useNavigate();
   const { id = undefined } = useParams<'id'>();
   const isNew = id === undefined;
@@ -38,19 +31,18 @@ export const PerguntaEditor: React.FC = () => {
   useEffect(() => {
     if(isNew) {
       formRef.current?.setData({
-        texto: '',
-        disciplinaId: undefined
+        nome: ''
       });
-    } else {
+    }else{
       setIsLoading(true);      
-      PerguntaService.getById(Number(id))
+      ProjetoService.getById(Number(id))
         .then((result) => {
           setIsLoading(false);
           if (result instanceof Error) {
             showMessage({message: result.message, level: MessageType.Error});
-            navigate(Environment.PERGUNTA_LISTA);
-          } else {
-            setTitle(`Pergunta ${id}`);
+            navigate(Environment.PROJETO_LISTA);
+          }else{
+            setTitle(result.nome);
             formRef.current?.setData(result);
           }
         });
@@ -63,25 +55,25 @@ export const PerguntaEditor: React.FC = () => {
       .then((dadosValidos) =>{
         setIsLoading(true);
         if(isNew){
-          PerguntaService.create(dadosValidos)
+          ProjetoService.create(dadosValidos)
             .then((result) => {
               setIsLoading(false);
               if(result instanceof Error){
                 showMessage({message: result.message, level: MessageType.Error});
               }else{
                 showMessage({message: Environment.REGISTRO_CRIADO, level: MessageType.Success});
-                navigate(Environment.PERGUNTA_LISTA);
+                navigate(Environment.PROJETO_LISTA);
               }
             });
         } else {
-          PerguntaService.updateById(Number(id), {id: Number(id), ...dadosValidos})
+          ProjetoService.updateById(Number(id), {id: Number(id), ...dadosValidos})
             .then((result) => {
               setIsLoading(false);
               if(result instanceof Error){
                 showMessage({message: result.message, level: MessageType.Error});
               }else{
                 showMessage({message: Environment.REGISTRO_ALTERADO, level: MessageType.Success});
-                navigate(Environment.PERGUNTA_LISTA);
+                navigate(Environment.PROJETO_LISTA);
               }
             });
         }
@@ -98,13 +90,13 @@ export const PerguntaEditor: React.FC = () => {
 
   const onDelete = () => {
     setIsOpenDelete(false);
-    PerguntaService.deleteById(Number(id))
+    ProjetoService.deleteById(Number(id))
       .then(result => {
         if(result instanceof Error){
           showMessage({message: result.message, level: MessageType.Error});
         }else{
           showMessage({message: Environment.REGISTRO_REMOVIDO, level: MessageType.Success});
-          navigate(Environment.PERGUNTA_LISTA);
+          navigate(Environment.PROJETO_LISTA);
         }
       });
   };
@@ -115,18 +107,18 @@ export const PerguntaEditor: React.FC = () => {
     
   return (
     <LayoutBase 
-      titulo={id ? title : 'Nova Pergunta'}
+      titulo={id ? title : 'Novo Projeto'}
       toolbar={
         <BarraAcoesEdicao
-          rotuloNovo='Nova'
+          rotuloNovo='Novo'
           mostrarNovo={!isNew}
           mostrarDeletar={!isNew}
           mostrarSalvar
           prontoSalvar={!isLoading}
           prontoNovo={!isLoading}
           prontoDeletar={!isLoading}
-          eventoNovo = {() => navigate(Environment.PERGUNTA_EDITOR)}
-          eventoVoltar = {() => navigate(Environment.PERGUNTA_LISTA)}
+          eventoNovo = {() => navigate(Environment.PROJETO_EDITOR)}
+          eventoVoltar = {() => navigate(Environment.PROJETO_LISTA)}
           eventoSalvar = {save}
           eventoDeletar = {() => handleDelete()}
         />
@@ -149,35 +141,11 @@ export const PerguntaEditor: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
                 <VTextField
                   fullWidth
-                  multiline={true}
-                  minRows={4}
-                  maxRows={4}
-                  label="Texto"
+                  label="Nome"
                   disabled={isLoading}
-                  placeholder="Texto" 
+                  placeholder="Nome" 
                   onChange={e => setTitle(e.target.value)}
-                  name="texto"/>
-              </Grid>
-            </Grid>
-            <Grid container item direction="row" spacing={2}>
-              <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
-                <VTextField
-                  fullWidth
-                  multiline={true}
-                  minRows={4}
-                  maxRows={4}                  
-                  label="Ajuda"
-                  disabled={isLoading} 
-                  placeholder="Ajuda" 
-                  name="ajuda"
-                />
-              </Grid>
-            </Grid>
-            <Grid container item direction="row" spacing={2}>
-              <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
-                <AutoCompleteCidade
-                  isExternalLoading={isLoading}
-                />
+                  name="nome"/>
               </Grid>
             </Grid>
           </Grid>

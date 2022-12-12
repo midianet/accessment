@@ -4,37 +4,37 @@
       "id": 1,
       "texto": "A aplicação possui arquitetura de solução que oferece flexibilidade de mudanças sem que haja grandes impactos.",
       "ajuda": "campo para ajuda 1",
-      "disciplinaId": 1
+      "disciplinasId": 1
     },
     {
       "id": 2,
       "texto": "A aplicação utiliza padrões de arquitetura de referência.",
       "ajuda": "campo para ajuda 2",
-      "disciplinaId": 2
+      "disciplinasId": 2
     },
     {
       "id": 3,
       "texto": "A stack de tecnologias da aplicação permite evolução.",
       "ajuda": "campo para ajuda 3",
-      "disciplinaId": 6
+      "disciplinasId": 6
     },
     {
       "id": 4,
       "texto": "A arquitetura de solução da aplicação é modular ou está passando por um processo de modularização.",
       "ajuda": "campo para ajuda 4",
-      "disciplinaId": 5
+      "disciplinasId": 5
     },
     {
-      "id": 5,      
+      "id": 5,
       "texto": "A arquitetura de solução da aplicação não é predominantemente monolítica.",
       "ajuda": "campo para ajuda 5",
-      "disciplinaId": 4
+      "disciplinasId": 4
     },
     {
       "id": 6,
-      "nome": "A arquitetura de solução utiliza de soluções plug-in. (capacidade de mudar providers/serviços sem impactar a aplicação)",
+      "texto": "Texto da pergunta 6",
       "ajuda": "campo para ajuda 6",
-      "disciplinaId": 3
+      "disciplinasId": 3
     }
   ],
   "disciplinas": [
@@ -65,6 +65,12 @@
     {
       "nome": "Dados",
       "id": 7
+    }
+  ],
+  "projetos": [
+    {
+      "id": 1,
+      "nome": "Aurora Alimentos"
     }
   ],
   "auth": {

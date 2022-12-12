@@ -1,7 +1,7 @@
 import { Environment } from '../../../environment';
 import { Api } from '../axios-config';
 
-export interface DisciplinaList{
+export interface ProjetoList{
     id: number;
     nome: string;
 }
@@ -12,18 +12,17 @@ export interface Disciplina{
 }
 
 type DisciplinaListCount = {
-    data: DisciplinaList[];
+    data: ProjetoList[];
     totalCount: number;
 }
 
 const getAll = async (page = 1, filter = ''): Promise<DisciplinaListCount | Error> => {
   try{
-    const url = page === -1 ? Environment.DISCIPLINA_API : `${Environment.DISCIPLINA_API}?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&nome_like=${filter}`;
+    const url = page === -1 ? Environment.PROJETO_API : `${Environment.PROJETO_API}?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&nome_like=${filter}`;
     const { data, headers } = await Api.get(url);
-    console.log(data);
     if (data) {
       return {
-        data.content,
+        data,
         totalCount: Number(headers['x-total-count'] || Environment.LIMITE_DE_LINHAS),
       };
     }
@@ -36,7 +35,7 @@ const getAll = async (page = 1, filter = ''): Promise<DisciplinaListCount | Erro
 
 const getById = async (id: number): Promise<Disciplina | Error> => {
   try{
-    const { data } = await Api.get(`${Environment.DISCIPLINA_API}/${id}`);
+    const { data } = await Api.get(`${Environment.PROJETO_API}/${id}`);
     if (data) {
       return data;
     }
@@ -49,7 +48,7 @@ const getById = async (id: number): Promise<Disciplina | Error> => {
 
 const create = async (dados: Omit<Disciplina,'id'>): Promise<number | Error> => {
   try{
-    const { data } = await Api.post<Disciplina>(Environment.DISCIPLINA_API, dados);
+    const { data } = await Api.post<Disciplina>(Environment.PROJETO_API, dados);
     if (data) {
       return data.id;
     }
@@ -62,7 +61,7 @@ const create = async (dados: Omit<Disciplina,'id'>): Promise<number | Error> => 
 
 const updateById = async (id: number, dados: Disciplina): Promise<void | Error> => {
   try{
-    await Api.put<Disciplina>(`${Environment.DISCIPLINA_API}/${id}`, dados);
+    await Api.put<Disciplina>(`${Environment.PROJETO_API}/${id}`, dados);
   }catch (error) {
     console.error(error);
     return new Error((error as {message: string}).message || Environment.REGISTRO_ALTERAR_ERRO);
@@ -71,14 +70,14 @@ const updateById = async (id: number, dados: Disciplina): Promise<void | Error> 
 
 const deleteById = async (id: number): Promise<void | Error> => {
   try{
-    await Api.delete(`${Environment.DISCIPLINA_API}/${id}`);
+    await Api.delete(`${Environment.PROJETO_API}/${id}`);
   }catch (error) {
     console.error(error);
     return new Error((error as {message: string}).message || Environment.REGISTRO_ALTERAR_ERRO);
   }
 };
 
-export const DisciplinaService = {
+export const ProjetoService = {
   getAll,
   create,
   getById,

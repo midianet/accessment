@@ -1,18 +1,18 @@
 import { Environment } from '../../../environment';
 import { Api } from '../axios-config';
+import { Disciplina } from '../disciplina/DisciplinaService';
 
 export interface PerguntaList{
     id: number;
-    disciplinaId: number;
-    
+    disciplinasId: number;
+    disciplinas: Disciplina;
 }
 
 export interface Pergunta{
     id: number;
     texto: string;
     ajuda?: string;
-    disciplinaId: number;
-
+    disciplinasId: number;
 }
 
 type PerguntaListCount = {
@@ -23,10 +23,8 @@ type PerguntaListCount = {
 const getAll = async (page = 1, filter = ''): Promise<PerguntaListCount | Error> => {
   try{
     const url = `${Environment.PERGUNTA_API}?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&id_like=${filter}`;
-    console.log(url);
     const { data, headers } = await Api.get(url);
     if (data) {
-      console.log(data);
       return {
         data,
         totalCount: Number(headers['x-total-count'] || Environment.LIMITE_DE_LINHAS),
@@ -38,6 +36,27 @@ const getAll = async (page = 1, filter = ''): Promise<PerguntaListCount | Error>
     return new Error((error as {message: string}).message || Environment.REGISTRO_LISTA_ERRO);
   }
 };
+
+const getAllWithDisciplina = async (page = 1, filter = ''): Promise<PerguntaListCount | Error> => {
+  try{
+    const url = `${Environment.PERGUNTA_API}?_expand=disciplinas&_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&id_like=${filter}`;
+    const { data, headers } = await Api.get(url);
+    if (data) {
+      console.log(data);
+      //data.forEach((element: PerguntaList ) => DisciplinaService.getById(element.disciplinasId)
+      //  .then((result) => element.disciplinaNome = (result as {nome: string}).nome));
+      return {
+        data,
+        totalCount: Number(headers['x-total-count'] || Environment.LIMITE_DE_LINHAS),
+      };
+    }
+    return new Error(Environment.REGISTRO_LISTA_ERRO);
+  }catch (error) {
+    console.error(error);
+    return new Error((error as {message: string}).message || Environment.REGISTRO_LISTA_ERRO);
+  }
+};
+
 
 const getById = async (id: number): Promise<Pergunta | Error> => {
   try{
@@ -85,6 +104,7 @@ const deleteById = async (id: number): Promise<void | Error> => {
 
 export const PerguntaService = {
   getAll,
+  getAllWithDisciplina,
   create,
   getById,
   updateById,

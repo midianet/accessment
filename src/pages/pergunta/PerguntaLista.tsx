@@ -10,7 +10,7 @@ import { useMessageContext, MessageType } from '../../shared/contexts';
 
 import { PerguntaList, PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
 
-export const PessoaLista: React.FC = () => {
+export const PerguntaLista: React.FC = () => {
   
   const {showMessage} = useMessageContext();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -34,13 +34,13 @@ export const PessoaLista: React.FC = () => {
   useEffect(() => {
     setIsLoading(true);
     debounce(() => {
-      PerguntaService.getAll(pagina, busca)
+      PerguntaService.getAllWithDisciplina(pagina, busca)
         .then((result) => {
-          console.log(result);
           setIsLoading(false);
           if(result instanceof Error){
             showMessage({message: result.message, level: MessageType.Error});
           }else{
+            console.log(result.data);
             setRows(result.data);
             setTotalCount(result.totalCount);
           }
@@ -96,6 +96,7 @@ export const PessoaLista: React.FC = () => {
             <TableRow>
               <TableCell sx={{width: '70px'}}>Ações</TableCell>
               <TableCell>Descrição</TableCell>
+              <TableCell>Disciplina</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -110,6 +111,7 @@ export const PessoaLista: React.FC = () => {
                   </IconButton>
                 </TableCell>
                 <TableCell>{`Pergunta ${row.id}`}</TableCell>
+                <TableCell>{row.disciplinas.nome}</TableCell>
               </TableRow>
             ))}
           </TableBody>

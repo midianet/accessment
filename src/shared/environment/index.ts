@@ -27,7 +27,7 @@ export const Environment = {
   /**
    * Url base para chamadas de API.
    */
-  URL_BASE: 'http://localhost:3333',
+  URL_BASE: 'http://localhost:8080',
 
   DISCIPLINA_LISTA : '/disciplina',
   DISCIPLINA_EDITOR : '/disciplina/editor',
@@ -35,6 +35,12 @@ export const Environment = {
 
   PERGUNTA_LISTA : '/pergunta',
   PERGUNTA_EDITOR : '/pergunta/editor',
-  PERGUNTA_API: '/perguntas'
+  PERGUNTA_API: '/perguntas',
+
+  PROJETO_LISTA : '/projeto',
+  PROJETO_EDITOR : '/projeto/editor',
+  PROJETO_API: '/projetos',
+
+  ASSESSMENT_EDITOR: '/assessment/editor'
  
 };

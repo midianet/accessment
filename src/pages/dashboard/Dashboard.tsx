@@ -7,42 +7,41 @@ import { DisciplinaService } from '../../shared/services/api/disciplina/Discipli
 import { useMessageContext } from '../../shared/contexts';
 
 export const Dashboard = () => {
-  const [isLoadingPessoas, setIsLoadingPessoas] = useState(true);
-  const [isLoadingCidades, setIsLoadingCidades] = useState(true);
-  const [totalPessoas, setTotalPessoas] = useState(0);
-  const [totalCidades, setTotalCidades] = useState(0);
+  const [isLoadingPerguntas, setIsLoadingPerguntas] = useState(true);
+  const [isLoadingDisciplinas, setIsLoadingDisciplinas] = useState(true);
+  const [totalPerguntas, setTotalPerguntas] = useState(0);
+  const [totalDisciplinas, setTotalDisciplinas] = useState(0);
   const {showMessage} = useMessageContext();
 
   useEffect(() => {
-    setIsLoadingPessoas(true);
+    setIsLoadingPerguntas(true);
     PerguntaService.getAll(1)
       .then((result) => {
-        setIsLoadingPessoas(false);
+        setIsLoadingPerguntas(false);
         if(result instanceof Error){
           showMessage({message: result.message , level:'error'});
         }else{
-          setTotalPessoas(result.totalCount);
+          setTotalPerguntas(result.totalCount);
         }
       });
   },[]);
 
   useEffect(() => {
-    setIsLoadingCidades(true);
+    setIsLoadingDisciplinas(true);
     DisciplinaService.getAll(1)
       .then((result) => {
-        setIsLoadingCidades(false);
+        setIsLoadingDisciplinas(false);
         if(result instanceof Error){
           showMessage({message: result.message , level:'error'});
         }else{
-          setTotalCidades(result.totalCount);
+          setTotalDisciplinas(result.totalCount);
         }
       });
   },[]);
 
   return (
     <LayoutBase 
-      titulo="Página Inicial" 
-      toolbar={<BarraAcoesEdicao mostrarNovo = {false} mostrarVoltar = {false}/>} 
+      titulo="" 
     >
       <Box width="100%" display="flex">
         <Grid container margin={1}>
@@ -50,15 +49,15 @@ export const Dashboard = () => {
             <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
               <Card>
                 <CardContent>
-                  <Typography variant="h5" align="center">Total de Pessoas</Typography>
+                  <Typography variant="h5" align="center">Total de Perguntas</Typography>
                 </CardContent>
                 <Box padding={6} display="flex" justifyContent="center" alignItems="vertical">
-                  {!isLoadingPessoas && (
+                  {!isLoadingPerguntas && (
                     <Typography variant="h1">
-                      {totalPessoas}
+                      {totalPerguntas}
                     </Typography>
                   )}
-                  {isLoadingPessoas && (
+                  {isLoadingPerguntas && (
                     <Typography 
                       variant="h6"
                       overflow="hidden"
@@ -74,15 +73,15 @@ export const Dashboard = () => {
             <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
               <Card>
                 <CardContent>
-                  <Typography variant="h5" align="center">Total de Cidades</Typography>
+                  <Typography variant="h5" align="center">Total de Disciplinas</Typography>
                 </CardContent>
                 <Box padding={6} display="flex" justifyContent="center" alignItems="vertical">
-                  {!isLoadingCidades && (
+                  {!isLoadingDisciplinas && (
                     <Typography variant="h1">
-                      {totalCidades}
+                      {totalDisciplinas}
                     </Typography>
                   )}
-                  {isLoadingCidades && (
+                  {isLoadingDisciplinas && (
                     <Typography 
                       variant="h6"
                       overflow="hidden"

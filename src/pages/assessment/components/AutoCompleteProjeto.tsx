@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 
-import { DisciplinaService } from '../../../shared/services/api/disciplina/DisciplinaService';
+import { ProjetoService } from '../../../shared/services/api/projeto/ProjetoService';
 import { useDebounce } from '../../../shared/hooks';
 import { useField } from '@unform/core';
 
@@ -10,11 +10,11 @@ type AutoCompleteOption = {
   label: string;
 }
 
-interface AutoCompleteCidadeProps {
+interface AutoCompleteProjetoProps {
   isExternalLoading?: boolean;
 }
-export const AutoCompleteCidade: React.FC<AutoCompleteCidadeProps> = ({ isExternalLoading = false }) => {
-  const { fieldName, registerField, defaultValue, error, clearError } = useField('disciplinaId');
+export const AutoCompleteProjeto: React.FC<AutoCompleteProjetoProps> = ({ isExternalLoading = false }) => {
+  const { fieldName, registerField, defaultValue, error, clearError } = useField('projetoId');
   const { debounce } = useDebounce();
   const [selectedId, setSelectedId] = useState<number | undefined>(defaultValue);
   const [opcoes, setOpcoes] = useState<AutoCompleteOption[]>([]);
@@ -33,14 +33,14 @@ export const AutoCompleteCidade: React.FC<AutoCompleteCidadeProps> = ({ isExtern
   useEffect(() => {
     setIsLoading(true);
     debounce(() => {
-      DisciplinaService.getAll(first ? -1 : 1, busca)
+      ProjetoService.getAll(first ? -1 : 1, busca)
         .then((result) => {
           setFirst(false);
           setIsLoading(false);
           if (result instanceof Error) {
             // alert(result.message);
           } else {
-            setOpcoes(result.data.map(disciplina => ({ id: disciplina.id, label: disciplina.nome})));
+            setOpcoes(result.data.map(projeto => ({ id: projeto.id, label: projeto.nome})));
           }
         });
     });
@@ -70,7 +70,7 @@ export const AutoCompleteCidade: React.FC<AutoCompleteCidadeProps> = ({ isExtern
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Disciplina"
+          label="Projeto"
           error={!!error}
           helperText={error}
         />
