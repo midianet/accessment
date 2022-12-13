@@ -42,7 +42,7 @@ export const DisciplinaEditor: React.FC = () => {
             showMessage({message: result.message, level: MessageType.Error});
             navigate(Environment.DISCIPLINA_LISTA);
           }else{
-            setTitle(result.nome);
+            setTitle(result.nome || '');
             formRef.current?.setData(result);
           }
         });

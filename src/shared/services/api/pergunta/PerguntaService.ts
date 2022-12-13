@@ -22,7 +22,6 @@ const getAll = async (page = 0, texto = '', order = ''): Promise<PerguntaList | 
     if(texto) params.push(`texto=${texto}`);
     if(order) params.push(`order=${order}`);
     const { data } = await Api.get(UrlHelper.parseUrl( Environment.PERGUNTA_API, params));
-    console.log(data);
     if (data) {
       return {
         data : data.content,
@@ -35,27 +34,6 @@ const getAll = async (page = 0, texto = '', order = ''): Promise<PerguntaList | 
     return new Error((error as {message: string}).message || Environment.REGISTRO_LISTA_ERRO);
   }
 };
-
-const getAllWithDisciplina = async (page = 0, filter = ''): Promise<PerguntaList | Error> => {
-  try{
-    const url = `${Environment.PERGUNTA_API}?_expand=disciplinas&_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&id_like=${filter}`;
-    const { data, headers } = await Api.get(url);
-    if (data) {
-      console.log(data);
-      //data.forEach((element: PerguntaList ) => DisciplinaService.getById(element.disciplinasId)
-      //  .then((result) => element.disciplinaNome = (result as {nome: string}).nome));
-      return {
-        data,
-        totalCount: Number(headers['x-total-count'] || Environment.LIMITE_DE_LINHAS),
-      };
-    }
-    return new Error(Environment.REGISTRO_LISTA_ERRO);
-  }catch (error) {
-    console.error(error);
-    return new Error((error as {message: string}).message || Environment.REGISTRO_LISTA_ERRO);
-  }
-};
-
 
 const getById = async (id: number): Promise<Pergunta | Error> => {
   try{
@@ -103,7 +81,6 @@ const deleteById = async (id: number): Promise<void | Error> => {
 
 export const PerguntaService = {
   getAll,
-  getAllWithDisciplina,
   create,
   getById,
   updateById,

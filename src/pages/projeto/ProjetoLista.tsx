@@ -8,7 +8,7 @@ import { useDebounce } from '../../shared/hooks';
 import { Environment } from '../../shared/environment'; 
 import { useMessageContext, MessageType } from '../../shared/contexts';
 
-import { ProjetoService, ProjetoList } from '../../shared/services/api/projeto/ProjetoService';
+import { ProjetoService, Projeto } from '../../shared/services/api/projeto/ProjetoService';
 
 export const ProjetoLista: React.FC = () => {
   
@@ -18,7 +18,7 @@ export const ProjetoLista: React.FC = () => {
   const { debounce } = useDebounce(1000);
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<ProjetoList[]>([]);
+  const [rows, setRows] = useState<Projeto[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
@@ -29,7 +29,7 @@ export const ProjetoLista: React.FC = () => {
   }, [searchParams]);
 
   const pagina = useMemo(() => {
-    return Number(searchParams.get('pagina')) || 1;
+    return Number(searchParams.get('pagina')) || 0;
   }, [searchParams]);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export const ProjetoLista: React.FC = () => {
         rotuloNovo='Novo'
         eventoNovo={() => navigate(Environment.PROJETO_EDITOR)}
         textoPesquisa={busca}
-        eventoPesquisa={texto => setSearchParams({busca:texto, pagina: '1'}, {replace: true})}
+        eventoPesquisa={texto => setSearchParams({busca:texto, pagina: '0'}, {replace: true})}
       />
     }>
       <DialogoConfirmacao

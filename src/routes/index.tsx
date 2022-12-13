@@ -49,6 +49,7 @@ export const AppRoutes = () =>  {
     <Route path={`${Environment.PERGUNTA_EDITOR}/:id`} element={<PerguntaEditor />}/>
     <Route path={Environment.PROJETO_LISTA} element={<ProjetoLista/>}/>
     <Route path={Environment.PROJETO_EDITOR} element={<ProjetoEditor />}/>
+    <Route path={`${Environment.PROJETO_EDITOR}/:id`} element={<ProjetoEditor/>}/>    
     <Route path={Environment.ASSESSMENT_EDITOR} element={<AssessmentEditor />}/>
     <Route path="*" element={<Navigate to={'/home'} />} />
   </Routes>

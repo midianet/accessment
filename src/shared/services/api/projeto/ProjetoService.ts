@@ -1,29 +1,28 @@
 import { Environment } from '../../../environment';
 import { Api } from '../axios-config';
+import { UrlHelper } from '../axios-config/UrlHelper';
 
-export interface ProjetoList{
+export interface Projeto{
     id: number;
     nome: string;
 }
 
-export interface Disciplina{
-    id: number;
-    nome: string;
-}
-
-type DisciplinaListCount = {
-    data: ProjetoList[];
+export interface ProjetoListCount {
+    data: Projeto[];
     totalCount: number;
 }
 
-const getAll = async (page = 1, filter = ''): Promise<DisciplinaListCount | Error> => {
+const getAll = async (page = 0, nome = '', order = ''): Promise<ProjetoListCount | Error> => {
   try{
-    const url = page === -1 ? Environment.PROJETO_API : `${Environment.PROJETO_API}?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&nome_like=${filter}`;
-    const { data, headers } = await Api.get(url);
+    const params: string[] = [];
+    if(page !== -1) params.push(`page=${page}`);
+    if(nome) params.push(`nome=${nome}`);
+    if(order) params.push(`order=${order}`);
+    const { data } = await Api.get(UrlHelper.parseUrl( Environment.PROJETO_API, params));
     if (data) {
       return {
-        data,
-        totalCount: Number(headers['x-total-count'] || Environment.LIMITE_DE_LINHAS),
+        data : data.content,
+        totalCount: data.totalElements
       };
     }
     return new Error(Environment.REGISTRO_LISTA_ERRO);
@@ -33,7 +32,7 @@ const getAll = async (page = 1, filter = ''): Promise<DisciplinaListCount | Erro
   }
 };
 
-const getById = async (id: number): Promise<Disciplina | Error> => {
+const getById = async (id: number): Promise<Projeto | Error> => {
   try{
     const { data } = await Api.get(`${Environment.PROJETO_API}/${id}`);
     if (data) {
@@ -46,9 +45,9 @@ const getById = async (id: number): Promise<Disciplina | Error> => {
   }
 };
 
-const create = async (dados: Omit<Disciplina,'id'>): Promise<number | Error> => {
+const create = async (dados: Omit<Projeto,'id'>): Promise<number | Error> => {
   try{
-    const { data } = await Api.post<Disciplina>(Environment.PROJETO_API, dados);
+    const { data } = await Api.post<Projeto>(Environment.PROJETO_API, dados);
     if (data) {
       return data.id;
     }
@@ -59,9 +58,9 @@ const create = async (dados: Omit<Disciplina,'id'>): Promise<number | Error> => 
   }   
 };
 
-const updateById = async (id: number, dados: Disciplina): Promise<void | Error> => {
+const updateById = async (id: number, dados: Projeto): Promise<void | Error> => {
   try{
-    await Api.put<Disciplina>(`${Environment.PROJETO_API}/${id}`, dados);
+    await Api.put<Projeto>(`${Environment.PROJETO_API}/${id}`, dados);
   }catch (error) {
     console.error(error);
     return new Error((error as {message: string}).message || Environment.REGISTRO_ALTERAR_ERRO);

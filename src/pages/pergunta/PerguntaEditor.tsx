@@ -7,22 +7,22 @@ import { Box, Grid, LinearProgress, Paper } from '@mui/material';
 
 import { LayoutBase } from '../../shared/layouts';
 import { BarraAcoesEdicao, DialogoConfirmacao } from '../../shared/components';
-import { VForm, VTextField, useVForm, IVFormErrors } from '../../shared/forms';
+import { VForm, VTextField, useVForm, IVFormErrors, VSelectField, VSelectOption } from '../../shared/forms';
 import { useMessageContext, MessageType } from '../../shared/contexts';
 
 import { PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
-import { AutoCompleteDisciplina } from './components/AutoCompleteDisciplina';
+import { DisciplinaService } from '../../shared/services/api/disciplina/DisciplinaService';
 
 interface Form {
   texto: string;
   ajuda?: string;
-  disciplinaId: number;
+  disciplinaId: string;
 }
 
 const validationSchema: yup.SchemaOf<Form> = yup.object().shape({
   texto: yup.string().required().min(3), 
   ajuda: yup.string().notRequired(),
-  disciplinaId: yup.number().required()
+  disciplinaId: yup.string().required()
 });
 
 export const PerguntaEditor: React.FC = () => {
@@ -31,15 +31,27 @@ export const PerguntaEditor: React.FC = () => {
   const isNew = id === undefined;
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
+  const [disciplinas, setDisciplinas] = useState<VSelectOption[]>([]);
   const [title, setTitle] = useState('');
   const { formRef, save } = useVForm();
   const { showMessage } = useMessageContext();
-  
+
+  useEffect(() => {
+    DisciplinaService.getAll(-1)
+      .then((result) => {
+        if(result instanceof Error){
+          showMessage({message: result.message, level: MessageType.Error});
+        }else{
+          setDisciplinas(result.data.map((element) =>{ return {value: String(element.id), label: element.nome};}));
+        }
+      });
+  }, []);
+
   useEffect(() => {
     if(isNew) {
       formRef.current?.setData({
         texto: '',
-        disciplinasId: undefined
+        disciplinaId: ''
       });
     } else {
       setIsLoading(true);      
@@ -51,7 +63,7 @@ export const PerguntaEditor: React.FC = () => {
             navigate(Environment.PERGUNTA_LISTA);
           } else {
             setTitle(`Pergunta ${id}`);
-            formRef.current?.setData(result);
+            formRef.current?.setData({disciplinaId: String(result.disciplina.id) , ...result});
           }
         });
     }
@@ -63,7 +75,7 @@ export const PerguntaEditor: React.FC = () => {
       .then((dadosValidos) =>{
         setIsLoading(true);
         if(isNew){
-          PerguntaService.create({...dadosValidos, disciplina: {id: dadosValidos.disciplinaId}})
+          PerguntaService.create({...dadosValidos, disciplina: {id: Number(dadosValidos.disciplinaId), nome:''}})
             .then((result) => {
               setIsLoading(false);
               if(result instanceof Error){
@@ -74,7 +86,7 @@ export const PerguntaEditor: React.FC = () => {
               }
             });
         } else {
-          PerguntaService.updateById(Number(id), {id: Number(id), ...dadosValidos})
+          PerguntaService.updateById(Number(id), {id: Number(id), ...dadosValidos, disciplina: {id: Number(dadosValidos.disciplinaId), nome:''}})
             .then((result) => {
               setIsLoading(false);
               if(result instanceof Error){
@@ -175,10 +187,8 @@ export const PerguntaEditor: React.FC = () => {
             </Grid>
             <Grid container item direction="row" spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
-                <AutoCompleteDisciplina
-                  isExternalLoading={isLoading}
-                />
-              </Grid> 
+                <VSelectField fullWidth name="disciplinaId" label="Disciplina"  options={disciplinas} />
+              </Grid>
             </Grid>
           </Grid>
         </Box>
