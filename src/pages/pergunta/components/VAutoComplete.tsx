@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 
-import { DisciplinaService } from '../../../shared/services/api/disciplina/DisciplinaService';
 import { useDebounce } from '../../../shared/hooks';
 import { useField } from '@unform/core';
 
@@ -10,11 +9,14 @@ type AutoCompleteOption = {
   label: string;
 }
 
-interface AutoCompleteDisciplinaProps {
+interface AutoCompleteProps {
   isExternalLoading?: boolean;
+  name: string;
+  label: string;
+  load: () => AutoCompleteOption[];
 }
-export const AutoCompleteDisciplina: React.FC<AutoCompleteDisciplinaProps> = ({ isExternalLoading = false }) => {
-  const { fieldName, registerField, defaultValue, error, clearError } = useField('disciplinasId');
+export const AutoCompleteDisciplina: React.FC<AutoCompleteProps> = ({ isExternalLoading = false, name, label, load}) => {
+  const { fieldName, registerField, defaultValue, error, clearError } = useField(name);
   const { debounce } = useDebounce();
   const [selectedId, setSelectedId] = useState<number | undefined>(defaultValue);
   const [opcoes, setOpcoes] = useState<AutoCompleteOption[]>([]);
@@ -33,7 +35,7 @@ export const AutoCompleteDisciplina: React.FC<AutoCompleteDisciplinaProps> = ({ 
   useEffect(() => {
     setIsLoading(true);
     debounce(() => {
-      DisciplinaService.getAll(first ? -1 : 1, busca)
+      /*load().
         .then((result) => {
           setFirst(false);
           setIsLoading(false);
@@ -42,7 +44,7 @@ export const AutoCompleteDisciplina: React.FC<AutoCompleteDisciplinaProps> = ({ 
           } else {
             setOpcoes(result.data.map(disciplina => ({ id: disciplina.id, label: disciplina.nome})));
           }
-        });
+        });*/
     });
   }, [busca, selectedId]);
 
@@ -70,7 +72,7 @@ export const AutoCompleteDisciplina: React.FC<AutoCompleteDisciplinaProps> = ({ 
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Disciplina"
+          label={label}
           error={!!error}
           helperText={error}
         />

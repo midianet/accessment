@@ -3,15 +3,15 @@ import { Environment } from '../../shared/environment';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import  * as yup  from 'yup';
-import { Box, Grid, LinearProgress, Paper } from '@mui/material';
+import { Box, Grid, LinearProgress, MenuItem, Paper, Select } from '@mui/material';
 
 import { LayoutBase } from '../../shared/layouts';
 import { BarraAcoesEdicao, DialogoConfirmacao } from '../../shared/components';
-import { VForm, VTextField, useVForm, IVFormErrors } from '../../shared/forms';
+import { VForm, VTextField, useVForm, IVFormErrors, VSelectField } from '../../shared/forms';
 import { useMessageContext, MessageType } from '../../shared/contexts';
 
 import { PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
-import { AutoCompleteDisciplina } from './components/AutoCompleteDisciplina';
+import { AutoCompleteDisciplina } from './components/VAutoComplete';
 
 interface Form {
   texto: string;
@@ -63,7 +63,7 @@ export const PerguntaEditor: React.FC = () => {
       .then((dadosValidos) =>{
         setIsLoading(true);
         if(isNew){
-          PerguntaService.create({...dadosValidos, disciplina: {id: dadosValidos.disciplinaId}})
+          /*PerguntaService.create({...dadosValidos, disciplina: {id: dadosValidos.disciplinaId}})
             .then((result) => {
               setIsLoading(false);
               if(result instanceof Error){
@@ -72,9 +72,9 @@ export const PerguntaEditor: React.FC = () => {
                 showMessage({message: Environment.REGISTRO_CRIADO, level: MessageType.Success});
                 navigate(Environment.PERGUNTA_LISTA);
               }
-            });
+            });*/
         } else {
-          PerguntaService.updateById(Number(id), {id: Number(id), ...dadosValidos})
+          /*PerguntaService.updateById(Number(id), {id: Number(id), ...dadosValidos})
             .then((result) => {
               setIsLoading(false);
               if(result instanceof Error){
@@ -83,7 +83,7 @@ export const PerguntaEditor: React.FC = () => {
                 showMessage({message: Environment.REGISTRO_ALTERADO, level: MessageType.Success});
                 navigate(Environment.PERGUNTA_LISTA);
               }
-            });
+            });*/
         }
       })
       .catch((errors: yup.ValidationError) => {
@@ -112,7 +112,7 @@ export const PerguntaEditor: React.FC = () => {
   const handleDelete = () => {
     setIsOpenDelete(true);
   };
-    
+
   return (
     <LayoutBase 
       titulo={id ? title : 'Nova Pergunta'}
@@ -175,8 +175,12 @@ export const PerguntaEditor: React.FC = () => {
             </Grid>
             <Grid container item direction="row" spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
-                <AutoCompleteDisciplina
-                  isExternalLoading={isLoading}
+                <VSelectField
+                  fullWidth
+                  name="disciplina"
+                  label="Disciplina"
+                  placeholder="Disciplina" 
+                  options={[{id:'1', label:'nome'},{id:'2', label:'telefone'}]}
                 />
               </Grid> 
             </Grid>
