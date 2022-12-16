@@ -7,7 +7,7 @@ export const LightTheme =  createTheme({
       main: blue[700],
       dark: blue[800],
       light: blue[500],
-      contrastText: '#ffffff',
+      contrastText: '#000000',
     },
     secondary: {
       main: cyan[500],
@@ -16,8 +16,8 @@ export const LightTheme =  createTheme({
       contrastText: '#ffffff',
     } ,      
     background: {
-      paper: '#E0E0E0',
-      default: '#F5F5F5'
+      paper: '#e6e7e8',
+      default: '#f0f2f5'
     }
   }
 });

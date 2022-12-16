@@ -8,7 +8,7 @@ import { useDebounce } from '../../shared/hooks';
 import { Environment } from '../../shared/environment'; 
 import { useMessageContext, MessageType } from '../../shared/contexts';
 
-import { Pergunta, PerguntaList, PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
+import { Pergunta, PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
 
 export const PerguntaLista: React.FC = () => {
   

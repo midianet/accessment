@@ -1,7 +1,7 @@
 
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Dashboard, DisciplinaLista , DisciplinaEditor , PerguntaLista, PerguntaEditor, ProjetoLista, ProjetoEditor, AssessmentEditor } from '../pages';
+import { Dashboard, DisciplinaLista , DisciplinaEditor , PerguntaLista, PerguntaEditor, ProjetoLista, ProjetoEditor, AssessmentEditor, Resultado } from '../pages';
 import { useDrawerContext } from '../shared/contexts';
 import { Environment } from '../shared/environment'; 
 
@@ -35,23 +35,30 @@ export const AppRoutes = () =>  {
         icon: 'format_list_bulleted',
         path: Environment.ASSESSMENT_EDITOR,
         label: 'Assessment'
+      },
+      {
+        icon: 'equalizer',
+        path: Environment.RESULTADO_DASHBOARD,
+        label: 'Resultado'
       }
     ]);
   },[]); 
 
-  return (<Routes>
-    <Route path="/home" element={<Dashboard />}/>
-    <Route path={Environment.DISCIPLINA_LISTA} element={<DisciplinaLista />}/>
-    <Route path={Environment.DISCIPLINA_EDITOR} element={<DisciplinaEditor />}/>
-    <Route path={`${Environment.DISCIPLINA_EDITOR}/:id`} element={<DisciplinaEditor />}/>
-    <Route path={Environment.PERGUNTA_LISTA} element={<PerguntaLista/>}/>
-    <Route path={Environment.PERGUNTA_EDITOR} element={<PerguntaEditor />}/>
-    <Route path={`${Environment.PERGUNTA_EDITOR}/:id`} element={<PerguntaEditor />}/>
-    <Route path={Environment.PROJETO_LISTA} element={<ProjetoLista/>}/>
-    <Route path={Environment.PROJETO_EDITOR} element={<ProjetoEditor />}/>
-    <Route path={`${Environment.PROJETO_EDITOR}/:id`} element={<ProjetoEditor/>}/>    
-    <Route path={Environment.ASSESSMENT_EDITOR} element={<AssessmentEditor />}/>
-    <Route path="*" element={<Navigate to={'/home'} />} />
-  </Routes>
+  return (
+    <Routes>
+      <Route path="/home" element={<Dashboard />}/>
+      <Route path={Environment.DISCIPLINA_LISTA} element={<DisciplinaLista />}/>
+      <Route path={Environment.DISCIPLINA_EDITOR} element={<DisciplinaEditor />}/>
+      <Route path={`${Environment.DISCIPLINA_EDITOR}/:id`} element={<DisciplinaEditor />}/>
+      <Route path={Environment.PERGUNTA_LISTA} element={<PerguntaLista/>}/>
+      <Route path={Environment.PERGUNTA_EDITOR} element={<PerguntaEditor />}/>
+      <Route path={`${Environment.PERGUNTA_EDITOR}/:id`} element={<PerguntaEditor />}/>
+      <Route path={Environment.PROJETO_LISTA} element={<ProjetoLista/>}/>
+      <Route path={Environment.PROJETO_EDITOR} element={<ProjetoEditor />}/>
+      <Route path={`${Environment.PROJETO_EDITOR}/:id`} element={<ProjetoEditor/>}/>    
+      <Route path={Environment.ASSESSMENT_EDITOR} element={<AssessmentEditor />}/>
+      <Route path={Environment.RESULTADO_DASHBOARD} element={<Resultado />}/>
+      <Route path="*" element={<Navigate to={'/home'} />} />
+    </Routes>
   );
 };

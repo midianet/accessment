@@ -41,6 +41,9 @@ export const Environment = {
   PROJETO_EDITOR : '/projeto/editor',
   PROJETO_API: '/projetos',
 
-  ASSESSMENT_EDITOR: '/assessment/editor'
- 
+  ASSESSMENT_EDITOR: '/assessment/editor',
+  ASSESSMENT_API: '/assessment',
+
+  RESULTADO_DASHBOARD: '/resultado/dashboard',
+  RESULTADO_DASHBOARD_API: '/resultado',
 };

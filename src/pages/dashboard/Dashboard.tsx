@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Box, Grid, Card, CardContent, Typography } from '@mui/material';
-import { BarraAcoesEdicao } from '../../shared/components';
 import { LayoutBase } from '../../shared/layouts/LayoutBase';
 import { PerguntaService } from '../../shared/services/api/pergunta/PerguntaService';
 import { DisciplinaService } from '../../shared/services/api/disciplina/DisciplinaService';

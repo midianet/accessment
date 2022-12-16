@@ -6,3 +6,4 @@ export * from './pergunta/PerguntaEditor';
 export * from './projeto/ProjetoLista';
 export * from './projeto/ProjetoEditor';
 export * from './assessment/AssessmentEditor';
+export * from './resultado/Resultado';
