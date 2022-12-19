@@ -46,4 +46,6 @@ export const Environment = {
 
   RESULTADO_DASHBOARD: '/resultado/dashboard',
   RESULTADO_DASHBOARD_API: '/resultado',
+
+  RESPOSTA_API: '/resposta',
 };
