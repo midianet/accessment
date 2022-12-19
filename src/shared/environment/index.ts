@@ -27,7 +27,7 @@ export const Environment = {
   /**
    * Url base para chamadas de API.
    */
-  URL_BASE: 'http://localhost:8080',
+  URL_BASE: 'http://metarch-api.caravanasprati.org',
 
   DISCIPLINA_LISTA : '/disciplina',
   DISCIPLINA_EDITOR : '/disciplina/editor',

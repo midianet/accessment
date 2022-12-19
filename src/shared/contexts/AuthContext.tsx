@@ -2,7 +2,6 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 import { AuthService } from '../services/api/auth/AuthService';
 
-
 interface IAuthContextData {
   logout: () => void;
   isAuthenticated: boolean;
@@ -31,13 +30,15 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
 
 
   const handleLogin = useCallback(async (email: string, password: string) => {
-    const result = await AuthService.auth(email, password);
-    if (result instanceof Error) {
-      return result.message;
-    } else {
-      localStorage.setItem(LOCAL_STORAGE_KEY__ACCESS_TOKEN, JSON.stringify(result.accessToken));
-      setAccessToken(result.accessToken);
-    }
+    //const result = await AuthService.auth(email, password);
+    //if (result instanceof Error) {
+    //  return result.message;
+    //} else {
+    //  localStorage.setItem(LOCAL_STORAGE_KEY__ACCESS_TOKEN, JSON.stringify(result.accessToken));
+    //  setAccessToken(result.accessToken);
+    localStorage.setItem(LOCAL_STORAGE_KEY__ACCESS_TOKEN, JSON.stringify('aaaaaaaaaa.bbbbbbbbbb.cccccccc'));
+    setAccessToken('aaaaaaaaaa.bbbbbbbbbb.cccccccc');
+    //}
   }, []);
 
   const handleLogout = useCallback(() => {
