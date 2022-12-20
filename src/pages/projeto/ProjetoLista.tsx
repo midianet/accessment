@@ -29,7 +29,7 @@ export const ProjetoLista: React.FC = () => {
   }, [searchParams]);
 
   const pagina = useMemo(() => {
-    return Number(searchParams.get('pagina')) || 0;
+    return Number(searchParams.get('pagina')) || 1;
   }, [searchParams]);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export const ProjetoLista: React.FC = () => {
         rotuloNovo='Novo'
         eventoNovo={() => navigate(Environment.PROJETO_EDITOR)}
         textoPesquisa={busca}
-        eventoPesquisa={texto => setSearchParams({busca:texto, pagina: '0'}, {replace: true})}
+        eventoPesquisa={texto => setSearchParams({busca:texto, pagina: '1'}, {replace: true})}
       />
     }>
       <DialogoConfirmacao

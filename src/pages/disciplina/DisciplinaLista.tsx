@@ -29,7 +29,7 @@ export const DisciplinaLista: React.FC = () => {
   }, [searchParams]);
 
   const pagina = useMemo(() => {
-    return Number(searchParams.get('pagina')) || 0;
+    return Number(searchParams.get('pagina')) || 1;
   }, [searchParams]);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export const DisciplinaLista: React.FC = () => {
         rotuloNovo='Nova'
         eventoNovo={() => navigate(Environment.DISCIPLINA_EDITOR)}
         textoPesquisa={busca}
-        eventoPesquisa={texto => setSearchParams({nome:texto, pagina: '0'}, {replace: true})}
+        eventoPesquisa={texto => setSearchParams({nome:texto, pagina: '1'}, {replace: true})}
       />
     }>
       <DialogoConfirmacao

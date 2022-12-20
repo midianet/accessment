@@ -15,10 +15,11 @@ export interface PerguntaList  {
     totalCount: number;
 }
 
-const getAll = async (page = 0, texto = '', order = ''): Promise<PerguntaList | Error> => {
+const getAll = async (page = 1, texto = '', order = ''): Promise<PerguntaList | Error> => {
   try{
+    page = page -1;
     const params: string[] = [];
-    if(page !== -1) params.push(`page=${page}`);
+    if(page !== -2) params.push(`page=${page}`);
     if(texto) params.push(`texto=${texto}`);
     if(order) params.push(`order=${order}`);
     const { data } = await Api.get(UrlHelper.parseUrl( Environment.PERGUNTA_API, params));

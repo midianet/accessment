@@ -12,10 +12,11 @@ export interface DisciplinaList {
     totalCount: number;
 }
 
-const getAll = async (page = 0, nome = '', order = ''): Promise<DisciplinaList | Error> => {
+const getAll = async (page = 1, nome = '', order = ''): Promise<DisciplinaList | Error> => {
   try{
+    page = page -1;
     const params: string[] = [];
-    if(page !== -1) params.push(`page=${page}`);
+    if(page !== -2) params.push(`page=${page}`);
     if(nome) params.push(`nome=${nome}`);
     if(order) params.push(`order=${order}`);
     const {data} = await Api.get(UrlHelper.parseUrl( Environment.DISCIPLINA_API, params));
