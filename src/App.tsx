@@ -9,7 +9,7 @@ import { DrawerProvider } from './shared/contexts/DrawerContext';
 import { AppThemeProvider } from './shared/contexts/ThemeContext';
 import { Login, MenuLateral } from './shared/components';
 
-export const App = () => {
+const App = () => {
   return (
     <AuthProvider>
       <AppThemeProvider>
@@ -28,3 +28,5 @@ export const App = () => {
     </AuthProvider>
   );
 };
+
+export default App;
